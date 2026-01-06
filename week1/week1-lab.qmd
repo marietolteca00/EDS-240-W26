@@ -1,0 +1,15 @@
+---
+title: "EDS-240: Week 1 Lab"
+format: html
+author: Marie Tolteca
+date: 01/07/2025
+---
+
+```{r, message=FALSE}
+library(here)
+library(janitor)
+library(usdata)
+library(palmerpenguins)
+library(tidyverse)
+```
+

@@ -6,6 +6,9 @@
 .RData
 .RDataTmp
 
+# Adding .DS_Store
+/week*/.DS_Store/
+
 # Ignore any folder named 'data/' within folders names 'week*' ('*' is a wildcard)
 /week*/data/
 

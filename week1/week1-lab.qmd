@@ -13,3 +13,67 @@ library(palmerpenguins)
 library(tidyverse)
 ```
 
+Load in Data
+```{r, message=FALSE}
+stressor <- read_csv(here("week1","data","stressor.csv")) %>% 
+  # lower case with janitor- 'snake_case'
+  clean_names()
+```
+
+View Data
+```{r}
+summary(stressor)
+head(stressor)
+```
+
+
+Remove special characters from columns state and stressor
+```{r}
+clean_stressor <- stressor %>% 
+  mutate(state = str_replace_all(state, "[^A-Za-z ]", ""), 
+         stressor = str_replace_all(stressor, "[^A-Za-z]", "")) %>% 
+  clean_names()
+```
+
+Check the class of the year variable. Update the data type if necessary.
+```{r}
+# Already Numeric
+class(stressor$year)
+```
+
+Pivot your dataframe to make it tidy data. 
+Create a new column named quarter that contains the quarter number that the observation took place in
+```{r}
+stressor_longer <- clean_stressor %>% 
+  pivot_longer(cols = 4:7,
+               names_to = "quarter",
+               values_to = "pct_affected") %>% 
+  mutate(quarter = case_when(
+    quarter == "january_march" ~ 1,
+    quarter == "april_june" ~ 2,
+    quarter == "july_september" ~ 3,
+    quarter == "october_december" ~ 4)) 
+```
+Remove any rows where the state is “United States” or “Other States”
+```{r}
+clean_stressor1 <- stressor_longer %>% 
+  # Remove any rows where the state is “United States” or “Other States”
+  filter(state != c("United States", "Other States"),
+         stressor == "Pesticides",
+         state == "Hawaii")
+
+clean_stressor1
+```
+Group by year and quarter to calculate the average stress level
+```{r}
+summ <- clean_stressor1 %>% 
+  group_by(year,quarter) %>% 
+  summarise(mean_pesticide = mean(pct_affected, na.rm= TRUE)) %>% 
+  ungroup()
+```
+data viz!
+```{r}
+ggplot(data =summ, aes(x = year, y = mean_pesticide)) +
+         geom_boxplot()
+```
+

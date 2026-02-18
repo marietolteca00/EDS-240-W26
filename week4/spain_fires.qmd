@@ -1,0 +1,46 @@
+---
+title: "spain_fires"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(lubridate)
+
+
+raw <-read.csv(here("week4","data","spain_wildfire_joined_2025.csv"))
+
+```
+
+```{r}
+colnames(raw)
+summary(raw)
+
+```
+
+
+```{r}
+raw_clean <- raw %>% 
+  mutate(month(dmy(paste0(raw$day,"1000")), label = TRUE)) %>% 
+  group_by(month) %>% 
+  summarise(month_avg_em_2003_2023 = mean(em_average_2003_2025, na.rm=TRUE),
+            month_avg_2025 = mean(em_year_2025, na.rm=TRUE))
+                    
+```
+
+emission line plot
+nf barplot
+grey
+```{r}
+ggplot(raw_clean)+
+  geom_col(aes(x= factor(month), y = month_avg_2025, color = month_avg_em_2003_2023), fill = "firebrick", alpha = 0.5)+
+  theme(
+  panel.background = element_rect(fill = 'grey', colour = 'grey30'),
+  panel.grid.major = element_line(colour = 'black', linetype = 'dotted'),
+  plot.title = element_text(color = "darkred", size = 16, face = "bold")
+)+
+  annotate("text", x= 8, y =18, label= "Peak")
+
+```
+
